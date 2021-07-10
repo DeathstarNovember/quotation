@@ -1,26 +1,24 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import './App.css'
 
-function App() {
+const URL_BASE = 'https://zenquotes.io/'
+
+const QUOTES_API_URL = `${URL_BASE}/api/`
+
+const OTD_API_URL = `https://apizen.date/`
+
+const modes = ['random', 'today', 'quotes']
+
+const attributionText = 'powered by zenquotes.io'
+
+const App = () => {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <p>
+        <a href={URL_BASE}>{attributionText}</a>
+      </p>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
