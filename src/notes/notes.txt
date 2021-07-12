@@ -1,0 +1,23 @@
+
+Hex codes
+
+#ffffff
+# ff ff ff
+# R  G  B
+values are between 0 (00) and 255 (ff)
+a value of 1 is 01
+value for 10 is 0A
+value for 15 is 0F
+value for 16 is 10
+value for 17 is 11
+value for 18 is 12
+value for 28 is 1C = (16 (11) + 12 (0C))
+
+
+Object.entries
+
+const options = {author: "albert-einstein", sortBy: "name", date: undefined}
+
+cosnt entries = Object.entries(options)
+=>
+[["author", "albert-einstein"], ["sortBy", "name"], ["date", undefined]]
