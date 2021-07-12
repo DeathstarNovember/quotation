@@ -1,4 +1,5 @@
 import React from 'react'
+import { ToggleFilterFunction } from '../App'
 
 export const FiltersSection = ({
   filters,
@@ -15,7 +16,7 @@ export const FiltersSection = ({
   showFilters: () => void
   authorFilters?: string[]
   tagFilters?: string[]
-  toggleFilter: (type: 'author' | 'tag', filter: string) => void
+  toggleFilter: ToggleFilterFunction
 }) => {
   return filters.length ? (
     filtersVisible ? (

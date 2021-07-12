@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { FiltersSection, Quotes, TagPill } from './components'
+import { AuthorSection, FiltersSection, Quotes, TagPill } from './components'
 
 //#region module (top) level
 
@@ -48,7 +48,8 @@ export const quoteCardTopColor = getRandomColor()
 export const quoteCardBottomColor = '#cccccc'
 //#endregion
 
-//#region Types
+//#region Types 
+export type ToggleFilterFunction = (type:"author" | "tag", filter:string)=>void
 /**
  * Common properties for API responses from quotable.io
  */
@@ -114,7 +115,7 @@ type TagResponse = Tag[]
 /**
  * Tag object type
  */
-type Tag = {
+export type Tag = {
   _id: string
   name: string
 }
@@ -122,7 +123,7 @@ type Tag = {
 /**
  * Author object type
  */
-type Author = {
+export type Author = {
   /**
    * Unique id for this Author.
    */
@@ -652,67 +653,17 @@ const App = () => {
             </div>
           )
         ) : null}
-        {authors ? (
-          authorsVisible ? (
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 5,
-                justifyContent: 'center',
-              }}
-            >
-              <div
-                style={{
-                  display: 'grid',
-                  justifyContent: 'center',
-                }}
-              >
-                <button onClick={hideAuthors}>Hide Authors</button>
-              </div>
-              <div
-                style={{ display: 'flex', flex: 1, justifyContent: 'center' }}
-              >
-                <button onClick={pageBack}>{'<'}</button>
-                <button>{authorPage}</button>
-                <button onClick={pageForward}>{'>'}</button>
-              </div>
-              <div
-                style={{
-                  display: 'grid',
-                  gap: 5,
-                  gridTemplateColumns: 'repeat(2, 1fr)',
-                  justifyContent: 'center',
-                }}
-              >
-                {authors.map((author) => {
-                  const active = Boolean(authorFilters?.includes(author.name))
-                  return (
-                    <button
-                      style={{
-                        ...(active ? { backgroundColor: selectedColor } : {}),
-                        cursor: 'pointer',
-                      }}
-                      key={`tagButton${author._id}`}
-                      onClick={() => toggleFilter('author', author.name)}
-                    >
-                      {author.name}
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-          ) : (
-            <div
-              style={{
-                display: 'grid',
-                justifyContent: 'center',
-              }}
-            >
-              <button onClick={showAuthors}>Show Authors</button>
-            </div>
-          )
-        ) : null}
+        <AuthorSection 
+          authors={authors}
+          authorsVisible={authorsVisible}
+          hideAuthors={hideAuthors}
+          pageBack={pageBack}
+          pageForward={pageForward}
+          authorPage={authorPage}
+          authorFilters={ authorFilters}
+          toggleFilter={ toggleFilter}
+          showAuthors={ showAuthors}
+        />
         <FiltersSection
           filters={filters}
           filtersVisible={filtersVisible}
@@ -729,3 +680,4 @@ const App = () => {
 }
 //#endregion
 export default App
+

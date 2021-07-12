@@ -5,6 +5,7 @@ import {
   Quote,
   quoteCardBottomColor,
   quoteCardTopColor,
+  ToggleFilterFunction,
 } from '../App'
 
 export const Quotes = ({
@@ -12,7 +13,7 @@ export const Quotes = ({
   toggleFilter,
 }: {
   quotes?: Quote[]
-  toggleFilter: (type: 'author' | 'tag', filter: string) => void
+  toggleFilter: ToggleFilterFunction
 }) => {
   return quotes ? (
     <div
@@ -68,6 +69,7 @@ export const Quotes = ({
                 <div style={{ display: 'flex', gap: 10 }}>
                   {result.tags.map((tag) => (
                     <TagPill
+                      key={`TagPill ${tag}`}
                       tag={tag}
                       quote={result}
                       onClick={() => toggleFilter('tag', tag)}
