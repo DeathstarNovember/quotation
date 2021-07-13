@@ -1,25 +1,75 @@
-import React from "react";
-import { Author, selectedColor, ToggleFilterFunction } from "../App";
+import React, { useEffect, useState } from "react";
+import { Author, AuthorsApiResponse, getConfiguredRequestUrl, selectedColor, ToggleFilterFunction } from "../App";
 
-export const AuthorSection = ({
-  authors, 
-  authorsVisible, 
-  hideAuthors, 
-  pageBack, 
-  authorPage, 
-  pageForward, 
+export const AuthorSection = ({ cacheAuthors,
   authorFilters, 
-  toggleFilter, 
-  showAuthors}: {
-    authors?: Author[], 
-    authorsVisible: boolean, 
-    hideAuthors: ()=>void, 
-    pageBack: ()=>void, 
-    authorPage: number, 
-    pageForward: ()=>void, 
+  toggleFilter}: {
+    cacheAuthors: (newAuthors: Author[]) => void
     authorFilters?: string[], 
     toggleFilter: ToggleFilterFunction, 
-    showAuthors: ()=>void}) => {
+    }) => {
+      const [authors, setAuthors] = useState<Author[] | undefined>(undefined)
+      const [authorPage, setAuthorPage] = useState<number>(1)
+      const [authorsVisible, setAuthorsVisible] = useState(false)
+      const [authorPages, setAuthorPages] = useState<number>(1)
+
+      
+  /**
+   * Hide author filter section
+   */
+      const hideAuthors = () => {
+    setAuthorsVisible(false)
+  }
+
+  /**
+   * Show author filter section
+   */
+    const showAuthors = () => {
+    setAuthorsVisible(true)
+  }
+
+    /**
+   * If possible, load the previous page of
+   * author filter results in the author filters section.
+   */
+    const pageBack = () => {
+      if (authorPage !== 1) {
+        setAuthorPage(authorPage - 1)
+      }
+    }
+      /**
+   * If possible, load the next page of
+   * author filter results in the author filters section.
+   */
+  const pageForward = () => {
+    if (authorPage !== authorPages) {
+      setAuthorPage(authorPage + 1)
+    }
+  }
+    // Respond to author page change
+    useEffect(() => {
+      // Construct a URL for the specified page
+      const authorsUrl = getConfiguredRequestUrl({
+        type: 'authors',
+        options: { page: authorPage },
+      })
+  
+      // Call the API with the constructed URL.
+      fetch(authorsUrl).then((res) => {
+        // Get the JSON data from the response.
+        res.json().then((data: AuthorsApiResponse) => {
+          // Display the authors in the authors filter section
+          setAuthors(data.results)
+          // Store the current page number for `back` and `next` purposes
+          setAuthorPage(data.page)
+          // Send the authors' info objects to the cache.
+          cacheAuthors(data.results)
+          // Update total page number
+          setAuthorPages(data.totalPages)
+        })
+      })
+      // Execute this effect on-load and every time the authorPage changes
+    }, [authorPage, cacheAuthors])
     return authors ? (
       authorsVisible ? (
         <div

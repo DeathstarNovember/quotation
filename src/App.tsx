@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { AuthorSection, FiltersSection, Quotes, TagPill } from './components'
+import React, { useCallback, useEffect, useState } from 'react'
+import { AuthorSection, FiltersSection, Quotes, TagPill, TagSection } from './components'
 
 //#region module (top) level
 
@@ -11,7 +11,7 @@ const API_URL = 'https://api.quotable.io/'
  * Gets a random color code.
  * @returns a random hexdecimal color code
  */
-const getRandomColor = () => {
+export const getRandomColor = () => {
   // list all hex characters in a string
   const letters = '0123456789ABCDEF'
 
@@ -89,7 +89,7 @@ type QuotesApiResponse = APIResponse & {
 /**
  * API response from the `/authors[?]` endpoint
  */
-type AuthorsApiResponse = APIResponse & {
+export type AuthorsApiResponse = APIResponse & {
   results: Author[]
 }
 
@@ -110,7 +110,7 @@ export type Quote = {
 /**
  * API response from the `/tags` endpoint
  */
-type TagResponse = Tag[]
+export type TagResponse = Tag[]
 
 /**
  * Tag object type
@@ -266,7 +266,7 @@ type RequestConfig =
  * @param config
  * @returns `string`
  */
-const getConfiguredRequestUrl = (config: RequestConfig): string => {
+export const getConfiguredRequestUrl = (config: RequestConfig): string => {
   // If `id` is passed as an option, return the `/:id` URL variant
   if (config.options && 'id' in config.options) {
     return `${API_URL}/${config.type}/${config.options.id}}`
@@ -339,27 +339,16 @@ const App = () => {
     undefined,
   )
 
-  const [tagColors, setTagColors] = useState<{ tag: string; color: string }[]>(
-    [],
-  )
-
   // Combined list of filters
   const filters = [...(tagFilters ?? []), ...(authorFilters ?? [])]
 
   // Available Filters
-  const [tags, setTags] = useState<Tag[] | undefined>(undefined)
 
-  const [authors, setAuthors] = useState<Author[] | undefined>(undefined)
 
   // Author Pagination
-  const [authorPage, setAuthorPage] = useState<number>(1)
 
-  const [authorPages, setAuthorPages] = useState<number>(1)
 
   // Sections Visibility
-  const [tagsVisible, setTagsVisible] = useState(false)
-
-  const [authorsVisible, setAuthorsVisible] = useState(false)
 
   const [filtersVisible, setFiltersVisible] = useState(true)
 
@@ -370,13 +359,13 @@ const App = () => {
   const [authorInfo, setAuthorInfo] = useState<Author[] | undefined>(undefined)
 
   // List of slugs from the cache
-  const authorInfoSlugs = (authorInfo ?? []).map((ai) => ai.slug)
+  //const authorInfoSlugs = (authorInfo ?? []).map((ai) => ai.slug)
 
   /**
    * Cache `Authors` in `newAuthors` if they do not already appear in the cache
    * @param newAuthors : `Author[]`
    */
-  const cacheAuthors = (newAuthors: Author[]) => {
+  const cacheAuthors = useCallback((newAuthors: Author[]) => {
     // Gather the slugs of the authors already in the cache
     const existingSlugs = authorInfo?.map((author) => author.slug)
 
@@ -395,39 +384,11 @@ const App = () => {
 
     // Add the new authors' info to the cache
     setAuthorInfo([...(authorInfo ?? []), ...newAuthorInfo])
-  }
+  },[authorInfo])
 
   //#endregion
 
   //#region Visibility Handlers
-
-  /**
-   * Show tag filter section
-   */
-  const showTags = () => {
-    setTagsVisible(true)
-  }
-
-  /**
-   * Hide tag filter section
-   */
-  const hideTags = () => {
-    setTagsVisible(false)
-  }
-
-  /**
-   * Show author filter section
-   */
-  const showAuthors = () => {
-    setAuthorsVisible(true)
-  }
-
-  /**
-   * Hide author filter section
-   */
-  const hideAuthors = () => {
-    setAuthorsVisible(false)
-  }
 
   /**
    * Show active filters section
@@ -441,29 +402,6 @@ const App = () => {
    */
   const hideFilters = () => {
     setFiltersVisible(false)
-  }
-  //#endregion
-
-  //#region Pagination handlers
-
-  /**
-   * If possible, load the previous page of
-   * author filter results in the author filters section.
-   */
-  const pageBack = () => {
-    if (authorPage !== 1) {
-      setAuthorPage(authorPage - 1)
-    }
-  }
-
-  /**
-   * If possible, load the next page of
-   * author filter results in the author filters section.
-   */
-  const pageForward = () => {
-    if (authorPage !== authorPages) {
-      setAuthorPage(authorPage + 1)
-    }
   }
   //#endregion
 
@@ -510,55 +448,7 @@ const App = () => {
       })
     })
     // Execute this effect on-load and every time the filters change
-  }, [authorFilters, tagFilters])
-
-  // Respond to author page change
-  useEffect(() => {
-    // Construct a URL for the specified page
-    const authorsUrl = getConfiguredRequestUrl({
-      type: 'authors',
-      options: { page: authorPage },
-    })
-
-    // Call the API with the constructed URL.
-    fetch(authorsUrl).then((res) => {
-      // Get the JSON data from the response.
-      res.json().then((data: AuthorsApiResponse) => {
-        // Display the authors in the authors filter section
-        setAuthors(data.results)
-        // Store the current page number for `back` and `next` purposes
-        setAuthorPage(data.page)
-        // Send the authors' info objects to the cache.
-        cacheAuthors(data.results)
-        // Update total page number
-        setAuthorPages(data.totalPages)
-      })
-    })
-    // Execute this effect on-load and every time the authorPage changes
-  }, [authorPage])
-
-  // Get a list of available tags from the API
-  useEffect(() => {
-    if (!tags) {
-      // Generate a URL for the request
-      const tagsUrl = getConfiguredRequestUrl({ type: 'tags' })
-
-      // Call the API with the generated URL
-      fetch(tagsUrl).then((res) => {
-        res.json().then((data: TagResponse) => {
-          // Generate a random color for each tags
-          const colors = data.map((tag) => {
-            return { tag: tag.name, color: getRandomColor() }
-          })
-          // Display the tags
-          setTags(data)
-          // Set the tag colors in state
-          setTagColors(colors)
-        })
-      })
-    }
-    // Execute only once when the component loads.
-  }, [])
+  }, [authorFilters, cacheAuthors, tagFilters])
 
   /**
    * Add or remove the `filter` from the `filters` of the specified `type`
@@ -583,86 +473,16 @@ const App = () => {
   }
   //#endregion
   return (
-    <div
-      style={{
-        display: 'flex',
-        flex: 1,
-        minHeight: '100vh',
-        flexDirection: 'column',
-        alignItems: 'center',
-        padding: '15px 10px',
-      }}
-    >
-      <div
-        style={{
-          display: 'grid',
-          gap: 5,
-        }}
-      >
-        {tags ? (
-          tagsVisible ? (
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                gap: 5,
-              }}
-            >
-              <div
-                style={{
-                  display: 'grid',
-                  justifyContent: 'center',
-                }}
-              >
-                <button onClick={hideTags}>Hide Tags</button>
-              </div>
-              <div
-                style={{
-                  display: 'grid',
-                  gap: 5,
-                  gridTemplateColumns: 'repeat(5, 1fr)',
-                  justifyContent: 'center',
-                }}
-              >
-                {tags.map((tag) => {
-                  const active = Boolean(tagFilters?.includes(tag.name))
-                  return (
-                    <button
-                      style={{
-                        ...(active ? { backgroundColor: selectedColor } : {}),
-                        cursor: 'pointer',
-                      }}
-                      key={`tagButton${tag._id}`}
-                      onClick={() => toggleFilter('tag', tag.name)}
-                    >
-                      {tag.name}
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-          ) : (
-            <div
-              style={{
-                display: 'grid',
-                justifyContent: 'center',
-              }}
-            >
-              <button onClick={showTags}>Show Tags</button>
-            </div>
-          )
-        ) : null}
+    <Layout>
+      <FiltersDisplay>
+        <TagSection
+          tagFilters={tagFilters}
+          toggleFilter={toggleFilter}
+        />
         <AuthorSection 
-          authors={authors}
-          authorsVisible={authorsVisible}
-          hideAuthors={hideAuthors}
-          pageBack={pageBack}
-          pageForward={pageForward}
-          authorPage={authorPage}
           authorFilters={ authorFilters}
-          toggleFilter={ toggleFilter}
-          showAuthors={ showAuthors}
+          toggleFilter={ toggleFilter} 
+          cacheAuthors={cacheAuthors}
         />
         <FiltersSection
           filters={filters}
@@ -673,11 +493,36 @@ const App = () => {
           tagFilters={tagFilters}
           toggleFilter={toggleFilter}
         />
-      </div>
+      </FiltersDisplay>
       <Quotes quotes={quotes} toggleFilter={toggleFilter} />
-    </div>
+    </Layout>
   )
 }
 //#endregion
 export default App
 
+const Layout: React.FC = ({children}) => {
+return (
+  <div
+      style={{
+        display: 'flex',
+        flex: 1,
+        minHeight: '100vh',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: '15px 10px',
+      }}
+    >{children}</div>
+)
+}
+
+const FiltersDisplay: React.FC = ({children}) => {
+  return (
+    <div
+    style={{
+      display: 'grid',
+      gap: 5,
+    }}
+>{children}</div>
+  )
+}
