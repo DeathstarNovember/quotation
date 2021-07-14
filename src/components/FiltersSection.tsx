@@ -1,23 +1,33 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { ToggleFilterFunction } from '../App'
 
 export const FiltersSection = ({
-  filters,
-  filtersVisible,
-  hideFilters,
-  showFilters,
   authorFilters,
   tagFilters,
   toggleFilter,
 }: {
-  filters: string[]
-  filtersVisible: boolean
-  hideFilters: () => void
-  showFilters: () => void
+
   authorFilters?: string[]
   tagFilters?: string[]
   toggleFilter: ToggleFilterFunction
 }) => {
+  const filters = [...(tagFilters ?? []), ...(authorFilters ?? [])]    // Combined list of filters
+  const [filtersVisible, setFiltersVisible] = useState(true)  // Sections Visibility
+
+  // ------------------------Visibility Handlers
+  /**
+   * Show active filters section
+   */
+  const showFilters = () => {
+    setFiltersVisible(true)
+  }
+    /**
+   * Hide active filters section
+   */
+  const hideFilters = () => {
+    setFiltersVisible(false)
+    }
+    
   return filters.length ? (
     filtersVisible ? (
       <div

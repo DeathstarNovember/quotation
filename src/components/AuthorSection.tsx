@@ -1,19 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Author, AuthorsApiResponse, getConfiguredRequestUrl, selectedColor, ToggleFilterFunction } from "../App";
 
-export const AuthorSection = ({ cacheAuthors,
-  authorFilters, 
-  toggleFilter}: {
+export const AuthorSection = ({ cacheAuthors, authorFilters, toggleFilter}: {
     cacheAuthors: (newAuthors: Author[]) => void
     authorFilters?: string[], 
     toggleFilter: ToggleFilterFunction, 
     }) => {
       const [authors, setAuthors] = useState<Author[] | undefined>(undefined)
-      const [authorPage, setAuthorPage] = useState<number>(1)
-      const [authorsVisible, setAuthorsVisible] = useState(false)
+      const [authorPage, setAuthorPage] = useState<number>(1)   // Author Pagination
       const [authorPages, setAuthorPages] = useState<number>(1)
-
-      
+      const [authorsVisible, setAuthorsVisible] = useState(false)
   /**
    * Hide author filter section
    */
@@ -70,6 +66,7 @@ export const AuthorSection = ({ cacheAuthors,
       })
       // Execute this effect on-load and every time the authorPage changes
     }, [authorPage, cacheAuthors])
+
     return authors ? (
       authorsVisible ? (
         <div
