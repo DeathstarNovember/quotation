@@ -340,7 +340,7 @@ const App = () => {
   )
 
   // Combined list of filters
-  const filters = [...(tagFilters ?? []), ...(authorFilters ?? [])]
+  //const filters = [...(tagFilters ?? []), ...(authorFilters ?? [])]
 
   // Available Filters
 
@@ -350,7 +350,6 @@ const App = () => {
 
   // Sections Visibility
 
-  const [filtersVisible, setFiltersVisible] = useState(true)
 
   // Displayed Quotes
   const [quotes, setQuotes] = useState<Quote[] | undefined>(undefined)
@@ -390,19 +389,6 @@ const App = () => {
 
   //#region Visibility Handlers
 
-  /**
-   * Show active filters section
-   */
-  const showFilters = () => {
-    setFiltersVisible(true)
-  }
-
-  /**
-   * Hide active filters section
-   */
-  const hideFilters = () => {
-    setFiltersVisible(false)
-  }
   //#endregion
 
   // Effects
@@ -448,7 +434,7 @@ const App = () => {
       })
     })
     // Execute this effect on-load and every time the filters change
-  }, [authorFilters, cacheAuthors, tagFilters])
+  }, [authorFilters, tagFilters])
 
   /**
    * Add or remove the `filter` from the `filters` of the specified `type`
@@ -485,10 +471,6 @@ const App = () => {
           cacheAuthors={cacheAuthors}
         />
         <FiltersSection
-          filters={filters}
-          filtersVisible={filtersVisible}
-          showFilters={showFilters}
-          hideFilters={hideFilters}
           authorFilters={authorFilters}
           tagFilters={tagFilters}
           toggleFilter={toggleFilter}
