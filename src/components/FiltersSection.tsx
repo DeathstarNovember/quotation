@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ToggleFilterFunction } from '../App'
+import { ToggleFilterFunction } from '../types'
 
 export const FiltersSection = ({
   authorFilters,

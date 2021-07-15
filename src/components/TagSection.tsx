@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react"
-import { getConfiguredRequestUrl, getRandomColor, selectedColor, Tag, TagResponse, ToggleFilterFunction } from "../App"
+import { getConfiguredRequestUrl, getRandomColor, selectedColor } from "../App"
+import { Tag, TagResponse, ToggleFilterFunction } from "../types"
 
 export const TagSection = ({ tagFilters, toggleFilter} : {tagFilters?:string[], toggleFilter: ToggleFilterFunction}) => {
   const [tags, setTags] = useState<Tag[] | undefined>(undefined)

@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react'
 import {
   Author,
   AuthorsApiResponse,
-  getConfiguredRequestUrl,
-  selectedColor,
   ToggleFilterFunction,
-} from '../App'
+} from '../types'
+import {  getConfiguredRequestUrl, selectedColor} from '../App'
 
 export const AuthorSection = ({
   cacheAuthors,

@@ -2,11 +2,13 @@ import React from 'react'
 import { TagPill } from '.'
 import {
   filterPillColor,
-  Quote,
   quoteCardBottomColor,
   quoteCardTopColor,
-  ToggleFilterFunction,
 } from '../App'
+import {
+  Quote,
+  ToggleFilterFunction,
+} from '../types'
 
 export const Quotes = ({
   quotes,
