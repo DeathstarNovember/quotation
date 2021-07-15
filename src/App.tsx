@@ -1,5 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { AuthorSection, FiltersSection, Quotes, TagPill, TagSection } from './components'
+import {
+  AuthorSection,
+  FiltersSection,
+  Quotes,
+  TagPill,
+  TagSection,
+} from './components'
 
 //#region module (top) level
 
@@ -48,8 +54,11 @@ export const quoteCardTopColor = getRandomColor()
 export const quoteCardBottomColor = '#cccccc'
 //#endregion
 
-//#region Types 
-export type ToggleFilterFunction = (type:"author" | "tag", filter:string)=>void
+//#region Types
+export type ToggleFilterFunction = (
+  type: 'author' | 'tag',
+  filter: string,
+) => void
 /**
  * Common properties for API responses from quotable.io
  */
@@ -344,12 +353,9 @@ const App = () => {
 
   // Available Filters
 
-
   // Author Pagination
 
-
   // Sections Visibility
-
 
   // Displayed Quotes
   const [quotes, setQuotes] = useState<Quote[] | undefined>(undefined)
@@ -364,26 +370,30 @@ const App = () => {
    * Cache `Authors` in `newAuthors` if they do not already appear in the cache
    * @param newAuthors : `Author[]`
    */
-  const cacheAuthors = useCallback((newAuthors: Author[]) => {
-    // Gather the slugs of the authors already in the cache
-    const existingSlugs = authorInfo?.map((author) => author.slug)
+  const cacheAuthors = useCallback(
+    (newAuthors: Author[]) => {
+      console.log('cacheAuthors')
+      // Gather the slugs of the authors already in the cache
+      const existingSlugs = authorInfo?.map((author) => author.slug)
 
-    // Gather the slugs of the authors in the `newAuthors` parameter
-    const newAuthorsSlugs = newAuthors.map((author) => author.slug)
+      // Gather the slugs of the authors in the `newAuthors` parameter
+      const newAuthorsSlugs = newAuthors.map((author) => author.slug)
 
-    // Gather only new slugs that are not already in cache
-    const newSlugs = existingSlugs?.length
-      ? getDifference(newAuthorsSlugs, existingSlugs)
-      : newAuthorsSlugs
+      // Gather only new slugs that are not already in cache
+      const newSlugs = existingSlugs?.length
+        ? getDifference(newAuthorsSlugs, existingSlugs)
+        : newAuthorsSlugs
 
-    // Gather the Author info associated with the newSlugs
-    const newAuthorInfo = newAuthors.filter((result) => {
-      return newSlugs.includes(result.slug)
-    })
+      // Gather the Author info associated with the newSlugs
+      const newAuthorInfo = newAuthors.filter((result) => {
+        return newSlugs.includes(result.slug)
+      })
 
-    // Add the new authors' info to the cache
-    setAuthorInfo([...(authorInfo ?? []), ...newAuthorInfo])
-  },[authorInfo])
+      // Add the new authors' info to the cache
+      setAuthorInfo([...(authorInfo ?? []), ...newAuthorInfo])
+    },
+    [authorInfo],
+  )
 
   //#endregion
 
@@ -461,13 +471,10 @@ const App = () => {
   return (
     <Layout>
       <FiltersDisplay>
-        <TagSection
-          tagFilters={tagFilters}
+        <TagSection tagFilters={tagFilters} toggleFilter={toggleFilter} />
+        <AuthorSection
+          authorFilters={authorFilters}
           toggleFilter={toggleFilter}
-        />
-        <AuthorSection 
-          authorFilters={ authorFilters}
-          toggleFilter={ toggleFilter} 
           cacheAuthors={cacheAuthors}
         />
         <FiltersSection
@@ -483,9 +490,9 @@ const App = () => {
 //#endregion
 export default App
 
-const Layout: React.FC = ({children}) => {
-return (
-  <div
+const Layout: React.FC = ({ children }) => {
+  return (
+    <div
       style={{
         display: 'flex',
         flex: 1,
@@ -494,17 +501,21 @@ return (
         alignItems: 'center',
         padding: '15px 10px',
       }}
-    >{children}</div>
-)
+    >
+      {children}
+    </div>
+  )
 }
 
-const FiltersDisplay: React.FC = ({children}) => {
+const FiltersDisplay: React.FC = ({ children }) => {
   return (
     <div
-    style={{
-      display: 'grid',
-      gap: 5,
-    }}
->{children}</div>
+      style={{
+        display: 'grid',
+        gap: 5,
+      }}
+    >
+      {children}
+    </div>
   )
 }
