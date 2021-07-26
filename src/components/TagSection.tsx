@@ -49,7 +49,7 @@ export const TagSection = ({ tagFilters, toggleFilter} : {tagFilters?:string[], 
   return tags ? (
   tagsVisible ? (
     <div
-      style={{
+      style={{ //--- inside tag section
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -57,7 +57,7 @@ export const TagSection = ({ tagFilters, toggleFilter} : {tagFilters?:string[], 
       }}
     >
       <div
-        style={{
+        style={{ //-- Hide tags title line
           display: 'grid',
           justifyContent: 'center',
         }}
@@ -65,7 +65,7 @@ export const TagSection = ({ tagFilters, toggleFilter} : {tagFilters?:string[], 
         <button onClick={hideTags}>Hide Tags</button>
       </div>
       <div
-        style={{
+        style={{ //--- inside tag section
           display: 'grid',
           gap: 5,
           gridTemplateColumns: 'repeat(5, 1fr)',
@@ -91,9 +91,9 @@ export const TagSection = ({ tagFilters, toggleFilter} : {tagFilters?:string[], 
     </div>
   ) : (
     <div
-      style={{
+      style={{ //--- show tags title line
         display: 'grid',
-        justifyContent: 'center',
+        // justifyContent: 'center',
       }}
     >
       <button onClick={showTags}>Show Tags</button>

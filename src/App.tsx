@@ -283,13 +283,16 @@ export default App
 const Layout: React.FC = ({ children }) => {
   return (
     <div
+    // use `display: "grid" ` for better control of the top-level layout.
+    // the gridTemplateColumns property will be very useful.
       style={{
-        display: 'flex',
-        flex: 1,
+        // margin: '0px',
         minHeight: '100vh',
-        flexDirection: 'column',
-        alignItems: 'center',
-        padding: '15px 10px',
+        width: '100vw',
+        // backgroundColor: '#15224b',
+        display: 'grid',
+        alignItems: 'start',
+        gridTemplateColumns: '1fr 5fr',
       }}
     >
       {children}
@@ -301,8 +304,14 @@ const FiltersDisplay: React.FC = ({ children }) => {
   return (
     <div
       style={{
+        height: '20vw',
+        width: '20vw',
         display: 'grid',
-        gap: 5,
+        // overflow: 'scroll',
+        gap: '20px',
+        padding: '20px',
+        gridTemplateColumns: '1fr',
+        gridTemplateRows: '1fr 1fr',
       }}
     >
       {children}

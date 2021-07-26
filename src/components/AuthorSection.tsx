@@ -80,7 +80,7 @@ export const AuthorSection = ({
   return authors ? (
     authorsVisible ? (
       <div
-        style={{
+        style={{ //---- authors when showing
           display: 'flex',
           flexDirection: 'column',
           gap: 5,
@@ -88,7 +88,7 @@ export const AuthorSection = ({
         }}
       >
         <div
-          style={{
+          style={{ //---- title line
             display: 'grid',
             justifyContent: 'center',
           }}
@@ -127,9 +127,9 @@ export const AuthorSection = ({
       </div>
     ) : (
       <div
-        style={{
+        style={{ 
           display: 'grid',
-          justifyContent: 'center',
+          // justifyContent: 'center',
         }}
       >
         <button onClick={showAuthors}>Show Authors</button>

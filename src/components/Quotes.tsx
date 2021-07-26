@@ -26,6 +26,7 @@ export const Quotes = ({
       }}
     >
       <h3>Quotes</h3>
+      <div>Current filters</div>
       <div
         style={{
           display: 'flex',
