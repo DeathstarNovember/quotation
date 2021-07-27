@@ -279,13 +279,13 @@ const Layout: React.FC = ({ children }) => {
     // the gridTemplateColumns property will be very useful.
       style={{
         // maxHeight: '100vh',
-        maxWidth: '1200px',
-        width: '100vw',
-        display: 'grid',
+        // maxWidth: '1200px',
+        // width: '100vw',
+        display: 'flex',
         // alignItems: 'start',
-        gridTemplateColumns: '1/3',
-        // background: '#1DBA92',
-        gridTemplateAreas: "filterBar quotes"
+        // gridTemplateColumns: '1/3',
+        background: '#1DBA92',
+        // gridTemplateAreas: "filterBar quotes"
       }}
     >
       {children}
@@ -295,20 +295,22 @@ const Layout: React.FC = ({ children }) => {
 
 const FiltersDisplay: React.FC = ({ children }) => {
   return (
-    <div
-      style={{
-        // height: '20vh',
-        minWidth: '20vw',
-        maxWidth: "200px",
-        display: 'grid',
-        gap: '5px',
-        position: 'fixed',
-        background: '##F9CF0E',
-        padding: '15px 15px 15px 15px',
-        gridArea: "filterBar"
-      }}
-    >
-      {children}
+    <div>
+      <div
+        style={{
+          // height: '20vh',
+          width: '20vw',
+          // maxWidth: "300px",
+          display: 'grid',
+          gap: '5px',
+          // position: 'fixed',
+          background: '#F9CF0E',
+          padding: '15px 15px 15px 15px',
+          gridArea: "filterBar"
+        }}
+      >
+        {children}
+      </div>
     </div>
   )
 }
@@ -317,12 +319,13 @@ const MainDisplay: React.FC = ({ children }) => {
   return (
     <div
     style={{
-      display: 'grid', 
-      minWidth: '20vw',
+      height: '100vh',
+      width: '80vw',
       // maxWidth: "80px",
-      background: '##C708C1',
+      background: '#C708C1',
       gridArea: 'quotes',
       // padding: '0px 20px 0px 20px',
+      overflowY: "scroll"
     }}
     >
       {children}

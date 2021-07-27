@@ -81,10 +81,10 @@ export const AuthorSection = ({
     authorsVisible ? (
       <div
         style={{ //---- authors when showing
-          display: 'flex',
-          flexDirection: 'column',
+          display: 'grid',
+          // flexDirection: 'column',
           gap: 5,
-          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
         <div
