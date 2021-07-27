@@ -183,11 +183,6 @@ const App = () => {
     },
     [authorInfo],
   )
-
-  //#endregion
-
-  //#region Visibility Handlers
-
   //#endregion
 
   // Effects
@@ -267,13 +262,10 @@ const App = () => {
           toggleFilter={toggleFilter}
           cacheAuthors={cacheAuthors}
         />
-        <FiltersSection
-          authorFilters={authorFilters}
-          tagFilters={tagFilters}
-          toggleFilter={toggleFilter}
-        />
       </FiltersDisplay>
-      <Quotes quotes={quotes} toggleFilter={toggleFilter} />
+      <MainDisplay>
+        <Quotes quotes={quotes} toggleFilter={toggleFilter} authorFilters={authorFilters} tagFilters={tagFilters}/>
+      </MainDisplay>
     </Layout>
   )
 }
@@ -286,13 +278,14 @@ const Layout: React.FC = ({ children }) => {
     // use `display: "grid" ` for better control of the top-level layout.
     // the gridTemplateColumns property will be very useful.
       style={{
-        // margin: '0px',
-        minHeight: '100vh',
+        // maxHeight: '100vh',
+        maxWidth: '1200px',
         width: '100vw',
-        // backgroundColor: '#15224b',
         display: 'grid',
-        alignItems: 'start',
-        gridTemplateColumns: '1fr 5fr',
+        // alignItems: 'start',
+        gridTemplateColumns: '1/3',
+        // background: '#1DBA92',
+        gridTemplateAreas: "filterBar quotes"
       }}
     >
       {children}
@@ -304,15 +297,33 @@ const FiltersDisplay: React.FC = ({ children }) => {
   return (
     <div
       style={{
-        height: '20vw',
-        width: '20vw',
+        // height: '20vh',
+        minWidth: '20vw',
+        maxWidth: "200px",
         display: 'grid',
-        // overflow: 'scroll',
-        gap: '20px',
-        padding: '20px',
-        gridTemplateColumns: '1fr',
-        gridTemplateRows: '1fr 1fr',
+        gap: '5px',
+        position: 'fixed',
+        background: '##F9CF0E',
+        padding: '15px 15px 15px 15px',
+        gridArea: "filterBar"
       }}
+    >
+      {children}
+    </div>
+  )
+}
+
+const MainDisplay: React.FC = ({ children }) => {
+  return (
+    <div
+    style={{
+      display: 'grid', 
+      minWidth: '20vw',
+      // maxWidth: "80px",
+      background: '##C708C1',
+      gridArea: 'quotes',
+      // padding: '0px 20px 0px 20px',
+    }}
     >
       {children}
     </div>

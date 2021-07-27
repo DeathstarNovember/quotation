@@ -1,5 +1,5 @@
 import React from 'react'
-import { TagPill } from '.'
+import { FiltersSection, TagPill } from '.'
 import {
   filterPillColor,
   quoteCardBottomColor,
@@ -12,10 +12,13 @@ import {
 
 export const Quotes = ({
   quotes,
-  toggleFilter,
+  toggleFilter, authorFilters,
+  tagFilters
 }: {
   quotes?: Quote[]
   toggleFilter: ToggleFilterFunction
+  authorFilters?: string[] 
+  tagFilters?: string[] 
 }) => {
   return quotes ? (
     <div
@@ -26,7 +29,11 @@ export const Quotes = ({
       }}
     >
       <h3>Quotes</h3>
-      <div>Current filters</div>
+      <FiltersSection
+          authorFilters={authorFilters}
+          tagFilters={tagFilters}
+          toggleFilter={toggleFilter}
+        />
       <div
         style={{
           display: 'flex',
@@ -34,7 +41,7 @@ export const Quotes = ({
           alignItems: 'center',
         }}
       >
-        {quotes?.map((result: Quote) => {
+        {quotes.length ?  quotes.map((result: Quote) => {
           return (
             <div
               key={result._id}
@@ -83,7 +90,7 @@ export const Quotes = ({
               </div>
             </div>
           )
-        })}
+        }):(<div>No Quotes match your filter selection.</div>)}
       </div>
     </div>
   ) : null
