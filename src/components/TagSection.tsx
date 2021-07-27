@@ -68,7 +68,7 @@ export const TagSection = ({ tagFilters, toggleFilter} : {tagFilters?:string[], 
         style={{ //--- inside tag section
           display: 'grid',
           gap: 5,
-          gridTemplateColumns: 'repeat(3, 1fr)',
+          gridTemplateColumns: 'repeat(2, 1fr)',
           justifyContent: 'center',
         }}
       >

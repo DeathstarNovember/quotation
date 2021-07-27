@@ -36,7 +36,7 @@ export const Quotes = ({
         />
       <div
         style={{
-          display: 'flex',
+          display: 'grid',
           flexDirection: 'column',
           alignItems: 'center',
         }}
@@ -46,7 +46,7 @@ export const Quotes = ({
             <div
               key={result._id}
               style={{
-                width: '50vw',
+                width: '600px',
                 gap: 10,
                 padding: 10,
                 borderRadius: 10,

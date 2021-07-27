@@ -121,7 +121,6 @@ const toggle = (filter: string, filters?: string[]) => {
 const getDifference = (arrA: string[], arrB: string[]) => {
   return arrA.filter((element) => !arrB.includes(element))
 }
-
 //#endregion
 
 //#region Component
