@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState} from 'react'
 import {
   AuthorSection,
   FiltersSection,
@@ -7,13 +7,27 @@ import {
   TagSection,
 } from './components'
 import { Author, AuthorsApiResponse, Quote, QuotesApiResponse, RequestConfig } from './types'
-
+import { findIconDefinition, IconDefinition, IconLookup, library } from '@fortawesome/fontawesome-svg-core'
+import { fas } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 //#region module (top) level
 
 const API_URL = 'https://api.quotable.io/'
 
-//#region Colors
+//--- Icons
+library.add(fas)
 
+const hamburgerLookup: IconLookup = { prefix: 'fas', iconName: 'bars' }
+const hamburgerIconDefinition: IconDefinition = findIconDefinition(hamburgerLookup)
+
+const arrowLookup: IconLookup = { prefix: 'fas', iconName: 'chevron-left'}
+const arrowIconDefinition: IconDefinition = findIconDefinition(arrowLookup)
+
+//---- Animation
+
+
+
+//#region Colors
 /**
  * Gets a random color code.
  * @returns a random hexdecimal color code
@@ -123,11 +137,34 @@ const getDifference = (arrA: string[], arrB: string[]) => {
 }
 //#endregion
 
+//-- fuction to get the dimensions
+const getWindowDimensions = () => {
+  const { innerWidth: width, innerHeight: height } = window;
+  return {
+    width,
+    height
+  };
+}
+
+// resize hook
+const useWindowDimensions = () => {
+  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+
+  useEffect(() => { //-- effect
+    function handleResize() { //-- handler
+      setWindowDimensions(getWindowDimensions());
+    }
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return windowDimensions;
+}
+
 //#region Component
 const App = () => {
-  //#region Component Body
-
-  //#region State
+  const { height, width } = useWindowDimensions();
 
   // Currently Applied Filters
   const [tagFilters, setTagFilters] = useState<string[] | undefined>(undefined)
@@ -150,6 +187,8 @@ const App = () => {
 
   // Author Information Cache
   const [authorInfo, setAuthorInfo] = useState<Author[] | undefined>(undefined)
+
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false)
 
   // List of slugs from the cache
   //const authorInfoSlugs = (authorInfo ?? []).map((ai) => ai.slug)
@@ -251,18 +290,46 @@ const App = () => {
         setTagFilters(newTagFilters)
     }
   }
+  const largeLayout = width >= 860 
+
+  const drawerIsOpen = largeLayout ? true : drawerOpen
+
+  const openDrawer = () => {
+    setDrawerOpen(true)
+  }
+  const closeDrawer = () => {
+    setDrawerOpen(false)
+  }
   //#endregion
   return (
-    <Layout>
-      <FiltersDisplay>
-        <TagSection tagFilters={tagFilters} toggleFilter={toggleFilter} />
-        <AuthorSection
-          authorFilters={authorFilters}
-          toggleFilter={toggleFilter}
-          cacheAuthors={cacheAuthors}
-        />
-      </FiltersDisplay>
-      <MainDisplay>
+    <Layout> 
+      {
+        drawerIsOpen ? (
+        <FiltersDisplay>
+          {!largeLayout ? (
+          <div style={{position: "fixed", top: 3, left: 10, padding:"0px 0px 0px 175px" }} onClick={closeDrawer}>
+            <div>
+              <FontAwesomeIcon icon={arrowIconDefinition}/>
+            </div>
+          </div>
+          ) : null }
+          <TagSection tagFilters={tagFilters} toggleFilter={toggleFilter} />
+          <AuthorSection
+            authorFilters={authorFilters}
+            toggleFilter={toggleFilter}
+            cacheAuthors={cacheAuthors}
+          />
+        </FiltersDisplay>): (<div style={{width: "50px"}}>
+          <div style={{padding: "5px"}} onClick={openDrawer}>
+            <div>
+              <FontAwesomeIcon icon={hamburgerIconDefinition} style={{padding: '0px 15px 0px 15px'}}/>
+            </div>
+          </div>
+          </div>
+          )
+      }
+      
+      <MainDisplay layoutSize={largeLayout ? 'large' : 'small'}> 
         <Quotes quotes={quotes} toggleFilter={toggleFilter} authorFilters={authorFilters} tagFilters={tagFilters}/>
       </MainDisplay>
     </Layout>
@@ -301,10 +368,10 @@ const FiltersDisplay: React.FC = ({ children }) => {
           width: '20vw',
           // maxWidth: "300px",
           display: 'grid',
-          gap: '5px',
+          gap: '3px',
           // position: 'fixed',
           background: '#F9CF0E',
-          padding: '15px 15px 15px 15px',
+          padding: '22px 15px 22px 15px',
           gridArea: "filterBar"
         }}
       >
@@ -314,12 +381,12 @@ const FiltersDisplay: React.FC = ({ children }) => {
   )
 }
 
-const MainDisplay: React.FC = ({ children }) => {
+const MainDisplay: React.FC<{layoutSize: 'small' | 'large'}> = ({ children, layoutSize }) => {
   return (
     <div
     style={{
       height: '100vh',
-      width: '80vw',
+      width: layoutSize === 'large' ? '80vw': '100vw',
       // maxWidth: "80px",
       background: '#C708C1',
       gridArea: 'quotes',
