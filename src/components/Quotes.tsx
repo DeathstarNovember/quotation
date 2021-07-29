@@ -1,19 +1,24 @@
 import React from 'react'
-import { TagPill } from '.'
+import { FiltersSection, TagPill } from '.'
 import {
   filterPillColor,
-  Quote,
   quoteCardBottomColor,
   quoteCardTopColor,
-  ToggleFilterFunction,
 } from '../App'
+import {
+  Quote,
+  ToggleFilterFunction,
+} from '../types'
 
 export const Quotes = ({
   quotes,
-  toggleFilter,
+  toggleFilter, authorFilters,
+  tagFilters
 }: {
   quotes?: Quote[]
   toggleFilter: ToggleFilterFunction
+  authorFilters?: string[] 
+  tagFilters?: string[] 
 }) => {
   return quotes ? (
     <div
@@ -24,19 +29,24 @@ export const Quotes = ({
       }}
     >
       <h3>Quotes</h3>
+      <FiltersSection
+          authorFilters={authorFilters}
+          tagFilters={tagFilters}
+          toggleFilter={toggleFilter}
+        />
       <div
         style={{
-          display: 'flex',
+          display: 'grid',
           flexDirection: 'column',
           alignItems: 'center',
         }}
       >
-        {quotes?.map((result: Quote) => {
+        {quotes.length ?  quotes.map((result: Quote) => {
           return (
             <div
               key={result._id}
               style={{
-                width: '50vw',
+                width: '600px',
                 gap: 10,
                 padding: 10,
                 borderRadius: 10,
@@ -80,7 +90,7 @@ export const Quotes = ({
               </div>
             </div>
           )
-        })}
+        }):(<div>No Quotes match your filter selection.</div>)}
       </div>
     </div>
   ) : null

@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react'
 import {
   Author,
   AuthorsApiResponse,
-  getConfiguredRequestUrl,
-  selectedColor,
   ToggleFilterFunction,
-} from '../App'
+} from '../types'
+import {  getConfiguredRequestUrl, selectedColor} from '../App'
 
 export const AuthorSection = ({
   cacheAuthors,
@@ -81,15 +80,15 @@ export const AuthorSection = ({
   return authors ? (
     authorsVisible ? (
       <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
+        style={{ //---- authors when showing
+          display: 'grid',
+          // flexDirection: 'column',
           gap: 5,
-          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
         <div
-          style={{
+          style={{ //---- title line
             display: 'grid',
             justifyContent: 'center',
           }}
@@ -128,9 +127,9 @@ export const AuthorSection = ({
       </div>
     ) : (
       <div
-        style={{
+        style={{ 
           display: 'grid',
-          justifyContent: 'center',
+          // justifyContent: 'center',
         }}
       >
         <button onClick={showAuthors}>Show Authors</button>

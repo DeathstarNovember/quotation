@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState} from 'react'
 import {
   AuthorSection,
   FiltersSection,
@@ -6,13 +6,28 @@ import {
   TagPill,
   TagSection,
 } from './components'
-
+import { Author, AuthorsApiResponse, Quote, QuotesApiResponse, RequestConfig } from './types'
+import { findIconDefinition, IconDefinition, IconLookup, library } from '@fortawesome/fontawesome-svg-core'
+import { fas } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 //#region module (top) level
 
 const API_URL = 'https://api.quotable.io/'
 
-//#region Colors
+//--- Icons
+library.add(fas)
 
+const hamburgerLookup: IconLookup = { prefix: 'fas', iconName: 'bars' }
+const hamburgerIconDefinition: IconDefinition = findIconDefinition(hamburgerLookup)
+
+const arrowLookup: IconLookup = { prefix: 'fas', iconName: 'chevron-left'}
+const arrowIconDefinition: IconDefinition = findIconDefinition(arrowLookup)
+
+//---- Animation
+
+
+
+//#region Colors
 /**
  * Gets a random color code.
  * @returns a random hexdecimal color code
@@ -55,219 +70,7 @@ export const quoteCardBottomColor = '#cccccc'
 //#endregion
 
 //#region Types
-export type ToggleFilterFunction = (
-  type: 'author' | 'tag',
-  filter: string,
-) => void
-/**
- * Common properties for API responses from quotable.io
- */
-type APIResponse = {
-  /**
-   * Number of records listed in the response
-   */
-  count: number
-  /**
-   * Total number of records matching the request
-   * in the API db.
-   */
-  totalCount: number
-  /**
-   * Current page number of results.
-   */
-  page: number
-  /**
-   * Total number of pages of results matching the
-   * request.
-   */
-  totalPages: number
-  /**
-   * Position of the last result in the total list of
-   * results matching the request.
-   */
-  lastItemIndex: number
-}
 
-/**
- * API response from the `/quotes[?]` endpoint
- */
-type QuotesApiResponse = APIResponse & {
-  results: Quote[]
-}
-
-/**
- * API response from the `/authors[?]` endpoint
- */
-export type AuthorsApiResponse = APIResponse & {
-  results: Author[]
-}
-
-/**
- * Quote object type.
- */
-export type Quote = {
-  tags: string[]
-  _id: string
-  author: string
-  content: string
-  authorSlug: string
-  length: number
-  dateAdded: string
-  dateModified: string
-}
-
-/**
- * API response from the `/tags` endpoint
- */
-export type TagResponse = Tag[]
-
-/**
- * Tag object type
- */
-export type Tag = {
-  _id: string
-  name: string
-}
-
-/**
- * Author object type
- */
-export type Author = {
-  /**
-   * Unique id for this Author.
-   */
-  _id: string
-  /**
-   * A brief, one paragraph bio of the author. Source: wiki API
-   */
-  bio: string
-  /**
-   * A one-line description of the author. Typically it is the person's primary
-   * occupation or what they are know for.
-   */
-  description: string
-  /**
-   * The link to the author's wikipedia page or official website
-   */
-  link: string
-  /**
-   * The authors full name
-   */
-  name: string
-  /**
-   * A slug is a URL-friendly ID derived from the authors name.
-   */
-  slug: string
-  /**
-   * The number of quotes by this author.
-   */
-  quoteCount: number
-}
-
-/**
- * Common configuration for API requests.
- */
-type RequestConfigOptions = {
-  id?: string
-  /**
-   * The maximum Length in characters ( can be combined with minLength )
-   */
-  maxLength?: number
-  /**
-   * The minimum Length in characters ( can be combined with maxLength )
-   */
-  minLength?: number
-  /**
-   * Filter quotes by tag(s). Takes a list of one or more tag names,
-   * separated by a comma (meaning AND) or a pipe (meaning OR).
-   * A comma separated list will match quotes that have all of the given tags.
-   * While a pipe (|) separated list will match quotes that have either of the provided tags.
-   */
-  tags?: string
-  /**
-   * Get quotes by a specific author.
-   * The value can be an author name or slug.
-   * To get quotes by multiple authors,
-   * provide a pipe separated list of author names/slugs.
-   */
-  author?: string
-  /**
-   * The field used to sort quotes
-   */
-  sortBy?: 'dateAdded' | 'dateModified' | 'author' | 'content'
-  /**
-   * The order in which results are sorted.
-   * The default order depends on the sortBy field.
-   * For string fields that are sorted alphabetically,
-   * the default order is ascending.
-   * For number and date fields, the default order is descending.
-   */
-  order?: 'asc' | 'desc'
-  /**
-   * Sets the number of results per page.
-   * min: 1, max: 150, default: 20
-   */
-  limit?: number
-  /**
-   * The page of results to return.
-   * If the value is greater than the total number of pages,
-   * request will not return any results.
-   * min: 1, default: 1
-   */
-  page?: number
-  /**
-   * Filter authors by slug. The value can be one or more author slugs.
-   * To get multiple authors by slug, the value should be a pipe separated list of slugs.
-   */
-  slug?: string
-}
-
-/**
- * Specific configuration type for API calls to the `/authors[?]` endpoint
- */
-type AuthorsRequestConfigOptions = Omit<
-  RequestConfigOptions,
-  'sortBy' | 'maxLength' | 'minLength' | 'tags' | 'author'
-> & { sortBy?: 'dateAdded' | 'dateModified' | 'name' | 'quoteCount' }
-
-/**
- * Specific configuration type for API calls to the `/quotes[?]` endpoint
- */
-type QuotesRequestConfigOptions = Omit<RequestConfigOptions, 'slug'>
-
-/**
- * Specific configuration type for API calls to the `/tags[?]` endpoint
- */
-type TagsRequestConfigOptions = Pick<RequestConfigOptions, 'sortBy' | 'order'>
-
-/**
- * Specific configuration type for API calls to the `/random[?]` endpoint
- */
-type RandomRequestConfigOptions = Pick<
-  RequestConfigOptions,
-  'maxLength' | 'minLength' | 'tags' | 'author'
->
-
-/**
- * General request configuration object type variants
- */
-type RequestConfig =
-  | {
-      type: 'quotes'
-      options?: QuotesRequestConfigOptions
-    }
-  | {
-      type: 'authors'
-      options?: AuthorsRequestConfigOptions
-    }
-  | {
-      type: 'tags'
-      options?: TagsRequestConfigOptions
-    }
-  | {
-      type: 'random'
-      options?: RandomRequestConfigOptions
-    }
 //#endregion
 
 /**
@@ -332,14 +135,36 @@ const toggle = (filter: string, filters?: string[]) => {
 const getDifference = (arrA: string[], arrB: string[]) => {
   return arrA.filter((element) => !arrB.includes(element))
 }
-
 //#endregion
+
+//-- fuction to get the dimensions
+const getWindowDimensions = () => {
+  const { innerWidth: width, innerHeight: height } = window;
+  return {
+    width,
+    height
+  };
+}
+
+// resize hook
+const useWindowDimensions = () => {
+  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+
+  useEffect(() => { //-- effect
+    function handleResize() { //-- handler
+      setWindowDimensions(getWindowDimensions());
+    }
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return windowDimensions;
+}
 
 //#region Component
 const App = () => {
-  //#region Component Body
-
-  //#region State
+  const { height, width } = useWindowDimensions();
 
   // Currently Applied Filters
   const [tagFilters, setTagFilters] = useState<string[] | undefined>(undefined)
@@ -362,6 +187,8 @@ const App = () => {
 
   // Author Information Cache
   const [authorInfo, setAuthorInfo] = useState<Author[] | undefined>(undefined)
+
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false)
 
   // List of slugs from the cache
   //const authorInfoSlugs = (authorInfo ?? []).map((ai) => ai.slug)
@@ -394,11 +221,6 @@ const App = () => {
     },
     [authorInfo],
   )
-
-  //#endregion
-
-  //#region Visibility Handlers
-
   //#endregion
 
   // Effects
@@ -444,6 +266,7 @@ const App = () => {
       })
     })
     // Execute this effect on-load and every time the filters change
+    //@ts-ignore
   }, [authorFilters, tagFilters])
 
   /**
@@ -467,23 +290,48 @@ const App = () => {
         setTagFilters(newTagFilters)
     }
   }
+  const largeLayout = width >= 860 
+
+  const drawerIsOpen = largeLayout ? true : drawerOpen
+
+  const openDrawer = () => {
+    setDrawerOpen(true)
+  }
+  const closeDrawer = () => {
+    setDrawerOpen(false)
+  }
   //#endregion
   return (
-    <Layout>
-      <FiltersDisplay>
-        <TagSection tagFilters={tagFilters} toggleFilter={toggleFilter} />
-        <AuthorSection
-          authorFilters={authorFilters}
-          toggleFilter={toggleFilter}
-          cacheAuthors={cacheAuthors}
-        />
-        <FiltersSection
-          authorFilters={authorFilters}
-          tagFilters={tagFilters}
-          toggleFilter={toggleFilter}
-        />
-      </FiltersDisplay>
-      <Quotes quotes={quotes} toggleFilter={toggleFilter} />
+    <Layout> 
+      {
+        drawerIsOpen ? (
+        <FiltersDisplay>
+          {!largeLayout ? (
+          <div style={{position: "fixed", top: 3, left: 10, padding:"0px 0px 0px 175px" }} onClick={closeDrawer}>
+            <div>
+              <FontAwesomeIcon icon={arrowIconDefinition}/>
+            </div>
+          </div>
+          ) : null }
+          <TagSection tagFilters={tagFilters} toggleFilter={toggleFilter} />
+          <AuthorSection
+            authorFilters={authorFilters}
+            toggleFilter={toggleFilter}
+            cacheAuthors={cacheAuthors}
+          />
+        </FiltersDisplay>): (<div style={{width: "50px"}}>
+          <div style={{padding: "5px"}} onClick={openDrawer}>
+            <div>
+              <FontAwesomeIcon icon={hamburgerIconDefinition} style={{padding: '0px 15px 0px 15px'}}/>
+            </div>
+          </div>
+          </div>
+          )
+      }
+      
+      <MainDisplay layoutSize={largeLayout ? 'large' : 'small'}> 
+        <Quotes quotes={quotes} toggleFilter={toggleFilter} authorFilters={authorFilters} tagFilters={tagFilters}/>
+      </MainDisplay>
     </Layout>
   )
 }
@@ -493,13 +341,17 @@ export default App
 const Layout: React.FC = ({ children }) => {
   return (
     <div
+    // use `display: "grid" ` for better control of the top-level layout.
+    // the gridTemplateColumns property will be very useful.
       style={{
+        // maxHeight: '100vh',
+        // maxWidth: '1200px',
+        // width: '100vw',
         display: 'flex',
-        flex: 1,
-        minHeight: '100vh',
-        flexDirection: 'column',
-        alignItems: 'center',
-        padding: '15px 10px',
+        // alignItems: 'start',
+        // gridTemplateColumns: '1/3',
+        background: '#1DBA92',
+        // gridTemplateAreas: "filterBar quotes"
       }}
     >
       {children}
@@ -509,11 +361,38 @@ const Layout: React.FC = ({ children }) => {
 
 const FiltersDisplay: React.FC = ({ children }) => {
   return (
+    <div>
+      <div
+        style={{
+          // height: '20vh',
+          width: '20vw',
+          // maxWidth: "300px",
+          display: 'grid',
+          gap: '3px',
+          // position: 'fixed',
+          background: '#F9CF0E',
+          padding: '22px 15px 22px 15px',
+          gridArea: "filterBar"
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  )
+}
+
+const MainDisplay: React.FC<{layoutSize: 'small' | 'large'}> = ({ children, layoutSize }) => {
+  return (
     <div
-      style={{
-        display: 'grid',
-        gap: 5,
-      }}
+    style={{
+      height: '100vh',
+      width: layoutSize === 'large' ? '80vw': '100vw',
+      // maxWidth: "80px",
+      background: '#C708C1',
+      gridArea: 'quotes',
+      // padding: '0px 20px 0px 20px',
+      overflowY: "scroll"
+    }}
     >
       {children}
     </div>

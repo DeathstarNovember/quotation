@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react"
-import { getConfiguredRequestUrl, getRandomColor, selectedColor, Tag, TagResponse, ToggleFilterFunction } from "../App"
+import { getConfiguredRequestUrl, getRandomColor, selectedColor } from "../App"
+import { Tag, TagResponse, ToggleFilterFunction } from "../types"
 
 export const TagSection = ({ tagFilters, toggleFilter} : {tagFilters?:string[], toggleFilter: ToggleFilterFunction}) => {
   const [tags, setTags] = useState<Tag[] | undefined>(undefined)
@@ -48,7 +49,7 @@ export const TagSection = ({ tagFilters, toggleFilter} : {tagFilters?:string[], 
   return tags ? (
   tagsVisible ? (
     <div
-      style={{
+      style={{ //--- inside tag section
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -56,7 +57,7 @@ export const TagSection = ({ tagFilters, toggleFilter} : {tagFilters?:string[], 
       }}
     >
       <div
-        style={{
+        style={{ //-- Hide tags title line
           display: 'grid',
           justifyContent: 'center',
         }}
@@ -64,10 +65,10 @@ export const TagSection = ({ tagFilters, toggleFilter} : {tagFilters?:string[], 
         <button onClick={hideTags}>Hide Tags</button>
       </div>
       <div
-        style={{
+        style={{ //--- inside tag section
           display: 'grid',
           gap: 5,
-          gridTemplateColumns: 'repeat(5, 1fr)',
+          gridTemplateColumns: 'repeat(2, 1fr)',
           justifyContent: 'center',
         }}
       >
@@ -90,9 +91,9 @@ export const TagSection = ({ tagFilters, toggleFilter} : {tagFilters?:string[], 
     </div>
   ) : (
     <div
-      style={{
+      style={{ //--- show tags title line
         display: 'grid',
-        justifyContent: 'center',
+        // justifyContent: 'center',
       }}
     >
       <button onClick={showTags}>Show Tags</button>
